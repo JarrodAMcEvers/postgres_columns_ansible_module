@@ -15,8 +15,9 @@ class PostgresColumnsHandler():
             "user": { "required": True, "type": "str" },
             "password": { "required": True, "type": "str" },
             "database": { "required": True, "type": "str" },
-            "tables": { "required": True, "type": "dict",
+            "assert_schema": { "required": True, "type": "list",
                 "options": {
+                    "table": { "required": True, "type": "str" },
                     "columns": { "required": True, "type": "list" }
                 }
             }
