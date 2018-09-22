@@ -20,10 +20,22 @@ class PostgresColumnsHandler():
             }
         }
 
+    def setModuleParams(self, params):
+        self.host = params['host']
+        self.port = params['port']
+        self.user = params['user']
+        self.password = params['password']
+        self.database = params['database']
+
+    def connectToDatabase(self):
+        psql.connect(host=self.host, port=self.port, user=self.user, password=self.password, database=self.database)
+
 def main():
     postgresColumns = PostgresColumnsHandler()
-    basic.AnsibleModule(argument_spec=postgresColumns.getArgumentSpec())
-    pass
+    module = basic.AnsibleModule(argument_spec=postgresColumns.getArgumentSpec())
+    postgresColumns.setModuleParams(module.params)
+
+    postgresColumns.connectToDatabase()
 
 if __name__ == '__main__':
     main()

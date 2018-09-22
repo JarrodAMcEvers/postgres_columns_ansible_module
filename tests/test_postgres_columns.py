@@ -11,7 +11,17 @@ class TestPostgresColumnsHandler(unittest.TestCase):
     def setUp(self):
         self.postgresColumnsHandler = PostgresColumnsHandler()
 
+        psycopg2.connect = MagicMock()
+
         self.module = MagicMock()
+        self.module.params = {
+            'database': fake.name(),
+            'host': fake.name(),
+            'port': fake.random_number(4),
+            'user': fake.name(),
+            'password': fake.name()
+        }
+        
         self.module.exit_json = MagicMock()
         basic.AnsibleModule = MagicMock(return_value=self.module)
 
@@ -34,3 +44,14 @@ class TestPostgresColumnsHandler(unittest.TestCase):
         main()
 
         basic.AnsibleModule.assert_called_with(argument_spec=self.postgresColumnsHandler.getArgumentSpec())
+
+    def testConnectToDatabaseWithModuleParams(self):
+        main()
+
+        psycopg2.connect.assert_called_with(
+            host=self.module.params['host'],
+            port=self.module.params['port'],
+            user=self.module.params['user'],
+            password=self.module.params['password'],
+            database=self.module.params['database']
+        )
