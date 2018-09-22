@@ -5,9 +5,6 @@ import psycopg2 as psql
 import psycopg2.extras
 
 class PostgresColumnsHandler():
-    def __init__(self):
-        pass
-
     def getArgumentSpec(self):
         return {
             "host": { "required": True, "type": "str" },
