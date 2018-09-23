@@ -39,6 +39,17 @@ class PostgresColumnsHandler():
         self.query = self.query[:-1]
         self.query += ') GROUP BY table_name'
         self.cursor.execute(self.query)
+        return self.cursor.fetchall()
+
+    def assertColumnsExistForTables(self, results):
+        failedAssertions = []
+        for row in results:
+            tableColumns = row['columns']
+            moduleColumns = list(map(lambda y: y['columns'], filter(lambda x: x['table'] == row['table'], self.assertSchema)))[0]
+            difference = set(moduleColumns) - set(tableColumns)
+            if len(difference) > 0:
+                failedAssertions.append({ 'table': row['table'], 'missing_columns': list(difference) })
+        return failedAssertions
 
 def main():
     postgresColumns = PostgresColumnsHandler()
@@ -46,7 +57,10 @@ def main():
     postgresColumns.setModuleParams(module.params)
 
     postgresColumns.connectToDatabase()
-    postgresColumns.getColumnsForTables()
+    queryResults = postgresColumns.getColumnsForTables()
+    failedAssertions = postgresColumns.assertColumnsExistForTables(queryResults)
+    if len(failedAssertions) > 0:
+        return module.fail_json(msg='Failed validation: %s' % failedAssertions)
 
 if __name__ == '__main__':
     main()

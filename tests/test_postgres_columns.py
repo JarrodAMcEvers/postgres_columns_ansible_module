@@ -75,3 +75,15 @@ class TestPostgresColumnsHandler(unittest.TestCase):
 
         self.connection.cursor.assert_called_with(cursor_factory=psycopg2.extras.RealDictCursor)
         assert self.cursor.execute.call_args_list[0] == call("SELECT json_agg(column_name) as columns, table_name as table FROM information_schema.columns WHERE table_schema = 'public' AND table_name IN ('" + table + "','" + table2 + "') GROUP BY table_name")
+
+    def testReturnsFailJsonIfTableDoesNotHaveTheColumnsGiven(self):
+        table = fake.name()
+        self.module.params['assert_schema'] = []
+        self.module.params['assert_schema'].append({ 'table': table, 'columns': ['col1'] })
+
+        self.cursor.fetchall = MagicMock(return_value=[{ 'table': table, 'columns': [] }])
+
+        expectedMessage = [{ 'table': table, 'missing_columns': ['col1'] }]
+        main()
+
+        self.module.fail_json.assert_called_with(msg="Failed validation: %s" % expectedMessage)
