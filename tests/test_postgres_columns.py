@@ -1,7 +1,7 @@
 import unittest
 from postgres_columns import main, PostgresColumnsHandler
 from ansible.module_utils import basic
-from mock import MagicMock, patch
+from mock import MagicMock, patch, call
 import psycopg2
 from faker import Faker
 fake = Faker('it_IT')
@@ -11,7 +11,14 @@ class TestPostgresColumnsHandler(unittest.TestCase):
     def setUp(self):
         self.postgresColumnsHandler = PostgresColumnsHandler()
 
-        psycopg2.connect = MagicMock()
+        self.cursor = MagicMock()
+        self.cursor.execute = MagicMock()
+
+        self.connection = MagicMock()
+        self.connection.cursor = MagicMock(return_value=self.cursor)
+        psycopg2.connect = MagicMock(return_value=self.connection)
+        psycopg2.extras = MagicMock()
+        psycopg2.extras.RealDictCursor = MagicMock()
 
         self.module = MagicMock()
         self.module.params = {
@@ -19,7 +26,8 @@ class TestPostgresColumnsHandler(unittest.TestCase):
             'host': fake.name(),
             'port': fake.random_number(4),
             'user': fake.name(),
-            'password': fake.name()
+            'password': fake.name(),
+            'assert_schema': []
         }
         
         self.module.exit_json = MagicMock()
@@ -55,3 +63,15 @@ class TestPostgresColumnsHandler(unittest.TestCase):
             password=self.module.params['password'],
             database=self.module.params['database']
         )
+
+    def testQueryTheDatabaseForAllTheTablesGiven(self):
+        table = fake.name()
+        table2 = fake.name()
+        self.module.params['assert_schema'] = []
+        self.module.params['assert_schema'].append({ 'table': table })
+        self.module.params['assert_schema'].append({ 'table': table2 })
+
+        main()
+
+        self.connection.cursor.assert_called_with(cursor_factory=psycopg2.extras.RealDictCursor)
+        assert self.cursor.execute.call_args_list[0] == call("SELECT json_agg(column_name) as columns FROM information_schema.columns WHERE table_schema = 'public' AND table_name IN ('" + table + "','" + table2 + "') GROUP BY table_name")
