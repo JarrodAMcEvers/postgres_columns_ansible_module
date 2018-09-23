@@ -74,4 +74,4 @@ class TestPostgresColumnsHandler(unittest.TestCase):
         main()
 
         self.connection.cursor.assert_called_with(cursor_factory=psycopg2.extras.RealDictCursor)
-        assert self.cursor.execute.call_args_list[0] == call("SELECT json_agg(column_name) as columns FROM information_schema.columns WHERE table_schema = 'public' AND table_name IN ('" + table + "','" + table2 + "') GROUP BY table_name")
+        assert self.cursor.execute.call_args_list[0] == call("SELECT json_agg(column_name) as columns, table_name as table FROM information_schema.columns WHERE table_schema = 'public' AND table_name IN ('" + table + "','" + table2 + "') GROUP BY table_name")

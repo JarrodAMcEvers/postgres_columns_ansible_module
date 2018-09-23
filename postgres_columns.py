@@ -5,7 +5,7 @@ import psycopg2 as psql
 import psycopg2.extras
 
 class PostgresColumnsHandler():
-    query = "SELECT json_agg(column_name) as columns FROM information_schema.columns WHERE table_schema = 'public' AND table_name IN ("
+    query = "SELECT json_agg(column_name) as columns, table_name as table FROM information_schema.columns WHERE table_schema = 'public' AND table_name IN ("
 
     def getArgumentSpec(self):
         return {
