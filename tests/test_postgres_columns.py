@@ -27,7 +27,7 @@ class TestPostgresColumnsHandler(unittest.TestCase):
             'port': fake.random_number(4),
             'user': fake.name(),
             'password': fake.name(),
-            'assert_schema': []
+            'assert_schema': [{ 'table': 'table', 'columns': [] }]
         }
         
         self.module.exit_json = MagicMock()
@@ -68,8 +68,8 @@ class TestPostgresColumnsHandler(unittest.TestCase):
         table = fake.name()
         table2 = fake.name()
         self.module.params['assert_schema'] = []
-        self.module.params['assert_schema'].append({ 'table': table })
-        self.module.params['assert_schema'].append({ 'table': table2 })
+        self.module.params['assert_schema'].append({ 'table': table, 'columns': [] })
+        self.module.params['assert_schema'].append({ 'table': table2, 'columns': [] })
 
         main()
 
@@ -87,6 +87,19 @@ class TestPostgresColumnsHandler(unittest.TestCase):
         main()
 
         self.module.fail_json.assert_called_with(msg="Failed validation: %s" % expectedMessage)
+
+    def testReturnsFailJsonIfTheTableDoesNotExist(self):
+        column = fake.street_suffix()
+        table = fake.name()
+        self.module.params['assert_schema'] = []
+        self.module.params['assert_schema'].append({ 'table': table, 'columns': [column] })
+
+        expectedMessage = [{ 'table': table, 'missing_columns': [column] }]
+        self.cursor.fetchall = MagicMock(return_value=[])
+
+        main()
+
+        self.module.fail_json.assert_called_with(msg='Failed validation: %s' % expectedMessage)
 
     def testReturnsExitJsonIfValidationPasses(self):
         table = fake.name()

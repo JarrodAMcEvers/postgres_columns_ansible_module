@@ -42,6 +42,9 @@ class PostgresColumnsHandler():
         return self.cursor.fetchall()
 
     def assertColumnsExistForTables(self, results):
+        if (len(results) == 0):
+            return list(map(lambda x: { 'table': x['table'], 'missing_columns': x['columns']}, self.assertSchema))
+
         failedAssertions = []
         for row in results:
             tableColumns = row['columns']
