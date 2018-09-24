@@ -61,6 +61,8 @@ def main():
     failedAssertions = postgresColumns.assertColumnsExistForTables(queryResults)
     if len(failedAssertions) > 0:
         return module.fail_json(msg='Failed validation: %s' % failedAssertions)
+    else:
+        return module.exit_json(changed=False, results={'results': 'passed'})
 
 if __name__ == '__main__':
     main()

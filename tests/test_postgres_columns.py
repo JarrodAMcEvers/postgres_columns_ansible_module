@@ -87,3 +87,15 @@ class TestPostgresColumnsHandler(unittest.TestCase):
         main()
 
         self.module.fail_json.assert_called_with(msg="Failed validation: %s" % expectedMessage)
+
+    def testReturnsExitJsonIfValidationPasses(self):
+        table = fake.name()
+        self.module.params['assert_schema'] = []
+        self.module.params['assert_schema'].append({ 'table': table, 'columns': ['col1'] })
+
+        self.cursor.fetchall = MagicMock(return_value=[{ 'table': table, 'columns': ['col1'] }])
+
+        expectedMessage = { 'results': 'passed' }
+        main()
+
+        self.module.exit_json.assert_called_with(changed=False, results=expectedMessage)
