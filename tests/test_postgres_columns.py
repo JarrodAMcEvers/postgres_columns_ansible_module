@@ -106,7 +106,7 @@ class TestPostgresColumnsHandler(unittest.TestCase):
         self.module.params['assert_schema'] = []
         self.module.params['assert_schema'].append({ 'table': table, 'columns': ['col1'] })
 
-        self.cursor.fetchall = MagicMock(return_value=[{ 'table': table, 'columns': ['col1'] }])
+        self.cursor.fetchall = MagicMock(return_value=[{ 'table': table, 'columns': ['col1', 'col2', 'other_col'] }])
 
         expectedMessage = { 'results': 'passed' }
         main()
