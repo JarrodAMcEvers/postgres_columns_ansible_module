@@ -3,7 +3,7 @@ The module fails if the column(s) do not exist on the table. Otherwise, life con
 
 Usage in an ansible-playbook:
 ```
-- name: make the query
+- name: check columns exist
   postgres_columns:
     host: 'localhost'
     port: 5432
