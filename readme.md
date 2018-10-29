@@ -1,5 +1,5 @@
 Ansible module that checks whether column(s) exist for a table(s) on a database.
-The module fails if the column(s) do not exist on the table. Otherwise, life continues.
+The module fails if the column(s) do not exist on the table or if the table specificed does not exist.
 
 Usage in an ansible-playbook:
 ```
