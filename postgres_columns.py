@@ -17,7 +17,12 @@ class PostgresColumnsHandler():
             "assert_schema": { "required": True, "type": "list",
                 "options": {
                     "table": { "required": True, "type": "str" },
-                    "columns": { "required": True, "type": "list" }
+                    "columns": { "required": True, "type": "list",
+                        "options": {
+                            "name": { "required": True, "type": "str" },
+                            "type": { "required": True, "type": "str" }
+                        }
+                    }
                 }
             }
         }
