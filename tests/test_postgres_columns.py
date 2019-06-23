@@ -108,7 +108,7 @@ class TestPostgresColumnsHandler(unittest.TestCase):
 
         self.cursor.fetchall = MagicMock(return_value=[{ 'table': table, 'columns': ['col1', 'col2', 'other_col'] }])
 
-        expectedMessage = { 'results': 'passed' }
+        expectedMessage = { 'passed': True }
         main()
 
         self.module.exit_json.assert_called_with(changed=False, results=expectedMessage)
@@ -120,7 +120,7 @@ class TestPostgresColumnsHandler(unittest.TestCase):
 
         self.cursor.fetchall = MagicMock(return_value=[{ 'table': table, 'columns': ['col1', 'col2', 'col3', 'col4'] }])
 
-        expectedMessage = { 'results': 'passed' }
+        expectedMessage = { 'passed': True }
         main()
 
         self.module.exit_json.assert_called_with(changed=False, results=expectedMessage)

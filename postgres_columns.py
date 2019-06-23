@@ -65,7 +65,7 @@ def main():
     if len(failedAssertions) > 0:
         return module.fail_json(msg='Failed validation: %s' % failedAssertions)
     else:
-        return module.exit_json(changed=False, results={'results': 'passed'})
+        return module.exit_json(changed=False, results={'passed': True})
 
 if __name__ == '__main__':
     main()
