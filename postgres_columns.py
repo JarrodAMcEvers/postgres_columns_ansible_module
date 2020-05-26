@@ -5,6 +5,7 @@ import psycopg2 as psql
 import psycopg2.extras
 
 class PostgresColumnsHandler():
+    #SELECT json_agg(json_build_object('name',column_name,'type',udt_name)) as columns, table_name as table FROM information_schema.columns WHERE table_schema = 'public' group by table_name
     query = "SELECT json_agg(column_name) as columns, table_name as table FROM information_schema.columns WHERE table_schema = 'public' AND table_name IN ("
 
     def getArgumentSpec(self):
