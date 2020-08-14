@@ -1,5 +1,6 @@
-Ansible module that checks whether column(s) exist for a table(s) on a database.
-The module fails if the column(s) do not exist on the table or if the table specificed does not exist.
+This ansible module asserts that a list of tables have the appropriate columns for a Postgres database.
+The module will fail if the table does not exist or the table is missing any specified columns.
+
 
 Usage in an ansible-playbook:
 ```
